@@ -17,5 +17,5 @@ public class OrderDTO {
     private String oid;
     private LocalDate date;
     private String cusId;
-    private List<OrderDetailDTO> orderDetals;
+    private List<OrderDetailDTO> orderDetails;
 }

@@ -12,6 +12,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import javax.xml.crypto.Data;
 
@@ -19,30 +20,30 @@ import javax.xml.crypto.Data;
 @EnableJpaRepositories(basePackages = "lk.ijse.spring.repo")
 @EnableTransactionManagement
 public class JPAConfig {
+
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource ds, JpaVendorAdapter va){
-       LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-         factory.setDataSource(ds);
-         factory.setJpaVendorAdapter(va);
-         factory.setPackagesToScan("lk.ijse.spring.entity");
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource ds, JpaVendorAdapter vad){
 
-         return factory;
-
+        LocalContainerEntityManagerFactoryBean factory= new LocalContainerEntityManagerFactoryBean();
+        factory.setDataSource(ds);
+        factory.setJpaVendorAdapter(vad);
+        factory.setPackagesToScan("lk.ijse.spring.entity");
+        return factory;
     }
 
     @Bean
     public DataSource dataSource(){
-        DriverManagerDataSource ds = new DriverManagerDataSource();
+        DriverManagerDataSource ds= new DriverManagerDataSource();
         ds.setUsername("root");
         ds.setPassword("1234");
         ds.setDriverClassName("com.mysql.jdbc.Driver");
-        ds.setUrl("jdbc:mysql://localhost:3306/swpdb?createDatabaseIfNotExist=true");
+        ds.setUrl("jdbc:mysql://localhost:3306/d2?createDatabaseIfNotExist=true");
         return ds;
     }
 
     @Bean
     public JpaVendorAdapter jpaVendorAdapter(){
-        HibernateJpaVendorAdapter va = new HibernateJpaVendorAdapter();
+        HibernateJpaVendorAdapter va= new HibernateJpaVendorAdapter();
         va.setDatabase(Database.MYSQL);
         va.setGenerateDdl(true);
         va.setDatabasePlatform("org.hibernate.dialect.MySQL8Dialect");
@@ -50,8 +51,10 @@ public class JPAConfig {
         return va;
     }
 
+
     @Bean
-    public PlatformTransactionManager transactionManager(){
-        return new JpaTransactionManager();
+    public PlatformTransactionManager transactionManager(EntityManagerFactory factory){
+        return new JpaTransactionManager(factory);
     }
+
 }
